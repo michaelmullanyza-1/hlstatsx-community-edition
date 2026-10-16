@@ -21,16 +21,14 @@ a PHP frontend.
 > Date format: DD.MM.YYYY
 ---
 
-### :book: Documentation
-* https://github.com/NomisCZ/hlstatsx-community-edition/wiki 🚧 Wiki - work in progress 🚧
 ### Opposing Force legacy player identities
 
 For a custom Opposing Force game registered as `gearbox` (real game `valve`),
 some game DLLs log the obsolete WON-ID `4294967295` for both humans and bots.
 The daemon resolves that sentinel using the configured server's authenticated
 RCON `status` roster, matching connection userid and current nickname.
-Configure working RCON access and keep `IgnoreBots=1` to exclude kills involving
-bots without discarding verified human-versus-human activity.
+Configure working RCON access, use standard SteamID (`Normal`) tracking and keep
+`IgnoreBots=1` to exclude bot kills without discarding verified human activity.
 
 The roster is cached per server for five seconds. Unresolved, pending or
 mismatched identities are untrackable and produce a rate-limited `AUTH` notice;
@@ -39,6 +37,8 @@ Native Steam/BOT identities and other games are unchanged. This does not add
 an Opposing Force game definition, assets, weapons or a database migration.
 Run `prove scripts/t/opfor-identity.t` for standalone core-Perl regressions.
 
+### :book: Documentation
+* https://github.com/NomisCZ/hlstatsx-community-edition/wiki 🚧 Wiki - work in progress 🚧
 ### :speech_balloon: Help
 *  https://forums.alliedmods.net/forumdisplay.php?f=156
 ---

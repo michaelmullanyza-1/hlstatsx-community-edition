@@ -82,6 +82,12 @@ eval "package ParserHarness; no strict 'vars'; $get_player\n$bot_check\n1;" or d
     ok(!$human->{is_bot}, "real parser does not exclude legitimate human");
     isnt($bot->{uniqueid}, $other_bot->{uniqueid}, "bots no longer collapse into sentinel account");
     is($other_human->{uniqueid}, "0:22222", "second real human remains distinct");
+    my $unknown = ParserHarness::getPlayerInfo('new human<999><4294967295><999>', 1, "");
+    is($unknown->{uniqueid}, "UNKNOWN", "unresolved actor stays untrackable even when creation requested");
+    my $calls = $ParserHarness::g_servers{$ParserHarness::s_addr}{calls};
+    my $native = ParserHarness::getPlayerInfo('human two<410><STEAM_0:1:12345><410>', 0, "");
+    is($native->{uniqueid}, "1:12345", "native OpFor SteamID bypasses resolution");
+    is($ParserHarness::g_servers{$ParserHarness::s_addr}{calls}, $calls, "native identity does not query RCON");
     for my $case ([$bot,$other_bot,1,"bot kills bot"], [$human,$bot,1,"human kills bot"],
                   [$bot,$human,1,"bot kills human"], [$human,$other_human,0,"human kills human"]) {
         my ($killer,$victim,$expected,$label) = @$case;
