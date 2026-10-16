@@ -76,6 +76,13 @@ echo '127.0.0.1 phpmyadmin.example.com' | sudo tee -a /etc/hosts
 1. Upgrade `daemon`:
     1. Simply bump the docker image to the latest tag
 
+## Daemon timestamp validation
+
+Invalid calendar/time fields are reported as `E998 MALFORMED TIMESTAMP` and
+discarded without terminating the daemon. Valid timestamp behavior is unchanged.
+Run the standalone core-Perl regressions with `prove src/scripts/t/timestamp.t`;
+no database or running game server is required.
+
 ## Development
 
 To use Docker Compose v2, use `docker compose` instead of `docker-compose`.
