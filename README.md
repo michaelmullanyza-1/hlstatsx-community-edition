@@ -35,7 +35,10 @@ mismatched identities are untrackable and produce a rate-limited `AUTH` notice;
 activity can be missed briefly after a join or rename until the next refresh.
 Native Steam/BOT identities and other games are unchanged. This does not add
 an Opposing Force game definition, assets, weapons or a database migration.
-Run `prove scripts/t/opfor-identity.t` for standalone core-Perl regressions.
+Untracked enter-game notifications take the existing `NOPLAYERINFO` path before
+the handler dereferences a player; they never become fake player objects.
+Run `prove scripts/t/opfor-identity.t scripts/t/enter-game.t` for standalone
+core-Perl parser and event-handler regressions.
 
 ### :book: Documentation
 * https://github.com/NomisCZ/hlstatsx-community-edition/wiki 🚧 Wiki - work in progress 🚧
