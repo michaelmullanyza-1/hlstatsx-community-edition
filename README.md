@@ -23,7 +23,13 @@ a PHP frontend.
 
 ### :book: Documentation
 * https://github.com/NomisCZ/hlstatsx-community-edition/wiki 🚧 Wiki - work in progress 🚧
+### Daemon timestamp validation
+
+Invalid calendar/time fields are reported as `E998 MALFORMED TIMESTAMP` and
+discarded without terminating the daemon. Valid timestamp behavior is unchanged.
+Run the standalone core-Perl regressions with `prove scripts/t/timestamp.t`;
+no database or running game server is required.
+
 ### :speech_balloon: Help
 *  https://forums.alliedmods.net/forumdisplay.php?f=156
 ---
-
