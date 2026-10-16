@@ -83,6 +83,13 @@ discarded without terminating the daemon. Valid timestamp behavior is unchanged.
 Run the standalone core-Perl regressions with `prove src/scripts/t/timestamp.t`;
 no database or running game server is required.
 
+Log dates remain `MM/DD/YYYY` by default. For a day-first server, set its
+`LogDateFormat` parameter in `hlstats_Servers_Config` to `DD/MM/YYYY` and reload
+the daemon. `MM/DD/YYYY` is also accepted explicitly. This is per server:
+ambiguous dates are never guessed and other servers keep their existing format.
+Invalid format settings are reported and their packets rejected. No database
+schema change is required.
+
 ## Development
 
 To use Docker Compose v2, use `docker compose` instead of `docker-compose`.

@@ -9,6 +9,7 @@ my $text = do { local $/; <$source> };
 my ($parser) = $text =~ /(\t\tif \(\$s_output =~ s\/\^\(\?:\.\*\?\)\?L .*?)(?=\n\t\tif \(\$g_debug >= 4\))/s;
 die "Could not locate the real timestamp parser" unless $parser;
 our @notices;
+our $test_date_format;
 sub printEvent { push @notices, [@_]; }
 
 my $run = eval(q~
@@ -22,6 +23,10 @@ my $run = eval(q~
         my $ev_timestamp = "unchanged";
         my $g_timestamp = $use_timestamp;
         my $g_stdin = $stdin;
+        my $s_addr = "synthetic";
+        my %g_config_servers = (
+            synthetic => { LogDateFormat => $main::test_date_format }
+        );
         for my $s_output (@packets) {
     ~ . $parser . q~
             push @accepted, {
@@ -85,4 +90,25 @@ is($prefixed->[0]{body}, $body, "existing UDP log framing supported");
 @notices = ();
 is(scalar(@{$run->(0, 0, "no timestamp", $valid)}), 1, "ordinary malformed line skipped");
 is($notices[0][0], 998, "ordinary malformed data reporting retained");
+
+$test_date_format = "DD/MM/YYYY";
+my $european = $run->(1, 0, 'L 16/10/2026 - 06:26:30: european');
+is($european->[0]{remote}, $expected, "explicit day-first date accepted");
+is($european->[0]{timestamp}, "2026-10-16 06:26:30", "day-first date normalized for storage");
+my $ambiguous = $run->(1, 0, 'L 03/04/2026 - 06:26:30: ambiguous');
+is($ambiguous->[0]{timestamp}, "2026-04-03 06:26:30", "explicit format resolves ambiguous date without guessing");
+is(scalar(@{$run->(0, 0, 'L 29/02/2024 - 00:00:00: leap')}), 1, "valid day-first leap day accepted");
+@notices = ();
+is(scalar(@{$run->(0, 0, 'L 31/04/2026 - 00:00:00: invalid', 'L 16/10/2026 - 06:26:30: valid')}), 1,
+   "invalid day-first date skipped and following event processed");
+is($notices[0][0], 998, "invalid day-first calendar field reported");
+$test_date_format = "MM/DD/YYYY";
+is($run->(1, 0, 'L 03/04/2026 - 06:26:30: month-first')->[0]{timestamp},
+   "2026-03-04 06:26:30", "explicit month-first format remains unchanged");
+for my $invalid_format ("YYYY/MM/DD", "") {
+    $test_date_format = $invalid_format;
+    @notices = ();
+    is(scalar(@{$run->(0, 0, $valid)}), 0, "invalid format configuration never silently guesses");
+    like($notices[0][1], qr/INVALID LogDateFormat/, "invalid format configuration is visible");
+}
 done_testing();
