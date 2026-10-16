@@ -2358,6 +2358,13 @@ while ($loop = &getLine()) {
 			$ev_hour  = $4;
 			$ev_min   = $5;
 			$ev_sec   = $6;
+			my $log_date_format = $g_config_servers{$s_addr}{"LogDateFormat"};
+			if (defined($log_date_format) && $log_date_format eq "DD/MM/YYYY") {
+				($ev_month, $ev_day) = ($ev_day, $ev_month);
+			} elsif (defined($log_date_format) && $log_date_format ne "MM/DD/YYYY") {
+				&printEvent(998, "INVALID LogDateFormat: expected MM/DD/YYYY or DD/MM/YYYY");
+				next;
+			}
 			$ev_time  = "$ev_hour:$ev_min:$ev_sec";
 			# Time::Local throws on invalid calendar fields. A malformed packet
 			# must not terminate the daemon or reuse the preceding event's time.
