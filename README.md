@@ -76,6 +76,22 @@ echo '127.0.0.1 phpmyadmin.example.com' | sudo tee -a /etc/hosts
 1. Upgrade `daemon`:
     1. Simply bump the docker image to the latest tag
 
+## Opposing Force legacy player identities
+
+For a custom Opposing Force game registered as `gearbox` (real game `valve`),
+some game DLLs log the obsolete WON-ID `4294967295` for both humans and bots.
+The daemon resolves that sentinel using the configured server's authenticated
+RCON `status` roster, matching connection userid and current nickname.
+Configure working RCON access and keep `IgnoreBots=1` to exclude kills involving
+bots without discarding verified human-versus-human activity.
+
+The roster is cached per server for five seconds. Unresolved, pending or
+mismatched identities are untrackable and produce a rate-limited `AUTH` notice;
+activity can be missed briefly after a join or rename until the next refresh.
+Native Steam/BOT identities and other games are unchanged. This does not add
+an Opposing Force game definition, assets, weapons or a database migration.
+Run `prove src/scripts/t/opfor-identity.t` for standalone core-Perl regressions.
+
 ## Development
 
 To use Docker Compose v2, use `docker compose` instead of `docker-compose`.
