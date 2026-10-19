@@ -37,8 +37,12 @@ Native Steam/BOT identities and other games are unchanged. This does not add
 an Opposing Force game definition, assets, weapons or a database migration.
 Untracked enter-game notifications take the existing `NOPLAYERINFO` path before
 the handler dereferences a player; they never become fake player objects.
-Run `prove scripts/t/opfor-identity.t scripts/t/enter-game.t` for standalone
-core-Perl parser and event-handler regressions.
+Untracked suicide notifications also require a safe missing-player path.
+The upstream suicide handler already checks this; standalone regressions cover
+17 event handlers for unresolved, pending and disconnected players, followed by
+verified human scoring and unchanged bot/minimum-player/bonus-round filters.
+Run `prove scripts/t/opfor-identity.t scripts/t/enter-game.t scripts/t/missing-player.t`
+for core-Perl parser and event-handler regressions.
 
 ### :book: Documentation
 * https://github.com/NomisCZ/hlstatsx-community-edition/wiki 🚧 Wiki - work in progress 🚧
