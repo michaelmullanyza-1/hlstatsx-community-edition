@@ -787,7 +787,7 @@ sub doEvent_Suicide
 	my $player = lookupPlayer($s_addr, $playerId, $playerUniqueId);
 	my $playerstr = &getPlayerInfoString($player, $playerId);
 
-	$player->set("is_dead", "1");
+	$player->set("is_dead", "1") if ($player);
 	
 	if ($g_servers{$s_addr}->{num_trackable_players} < $g_servers{$s_addr}->{minplayers})
 	{
